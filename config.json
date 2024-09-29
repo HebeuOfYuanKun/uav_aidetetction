@@ -1,0 +1,19 @@
+{
+  "version": "3",
+  "host": "127.0.0.1",
+  "adminPort": 9001,
+  "analyzerPort": 9002,
+  "mediaHttpPort": 9003,
+  "mediaRtspPort": 554,
+  "mediaSecret": "aqxY9ps21fyhyKNRyYpGvJCTp1JBeGOM",
+  "rootDir": "D:\\BaiduNetdiskDownload\\download\\VideoAnalyzer_v3\\BXC_VideoAnalyzer_v3.2\\MediaServer\\release\\windows\\Release\\Release\\www",
+  "videoFileNameFormat": "%Y%m%d%H%M%S",
+  "recordLogInterval": 30,
+  "workerConcurrency": 20,
+  "supportHardwareVideoDecode": false,
+  "supportHardwareVideoEncode": false,
+  "yolov8OpenVINOWeight": "D:\\BaiduNetdiskDownload\\download\\VideoAnalyzer_v3\\BXC_VideoAnalyzer_v3.1\\Analyzer\\models\\best.xml",
+  "yolov8TensorRTWeight": "F:\\code\\AiDetection\\Analyzer\\models\\402.engine",
+  "algorithmEngine": "TensorRT",
+  "algorithmDevice": "GPU"
+}
