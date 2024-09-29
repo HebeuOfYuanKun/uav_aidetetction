@@ -3,7 +3,7 @@ project(Analyzer)
 
 #set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread ")
-set(OpenCV_DIR "D:\\BaiduNetdiskDownload\\download\\VideoAnalyzer_v3\\BXC_VideoAnalyzer_v3.2\\Analyzer\\3rdparty\\opencv\\x64\\vc16\\lib") 
+set(OpenCV_DIR "") #你的OpenCV目录Analyzer\\3rdparty\\opencv\\x64\\vc16\\lib
 
 set(CMAKE_BUILD_TYPE DEBUG)
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")

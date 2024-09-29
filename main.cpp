@@ -53,14 +53,12 @@ int main(int argc, char** argv)
 		printf("failed to read config file: %s\n", file);
 		return -1;
 	}
-	printf("视频分析器 %s \n", PROJECT_VERSION);
+	printf("无人机智慧识别模块 %s \n", PROJECT_VERSION);
 	config.show();
 	printf("\n");
 	printf("请注意! 上面打印的配置参数中，有涉及路径的参数，一定要在config.json修改成自己的路径，否则程序一定会报错的，如果不知道config.json各个参数代表什么意思，请参考README.md\n");
 	printf("\n");
-	printf("v3.0 发布于2023.10.23，如果不清楚如何使用，请参考视频：https://www.bilibili.com/video/BV1Xy4y1P7M2\n");
-	printf("v3.1 发布于2023.12.11，如果不清楚如何使用，请参考视频：https://www.bilibili.com/video/BV1F64y1L7dq\n");
-	printf("v3.2（当前版本） 发布于2023.12.31，如果不清楚如何使用，请参考视频：https://www.bilibili.com/video/BV12g4y167u2\n");
+	printf("%s 发布于2024.9.29.\n", PROJECT_VERSION);
 
 	printf("\n");
 	printf("\n");
