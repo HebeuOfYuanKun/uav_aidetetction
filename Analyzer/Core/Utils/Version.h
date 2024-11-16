@@ -1,0 +1,5 @@
+﻿#ifndef ANALYZER_VERSION_H
+#define ANALYZER_VERSION_H
+//#define PROJECT_VERSION "v1.0"
+#define PROJECT_VERSION "v2.0"
+#endif //ANALYZER_VERSION_H
