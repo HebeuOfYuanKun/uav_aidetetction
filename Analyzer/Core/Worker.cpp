@@ -77,7 +77,7 @@ namespace AVSAnalyzer {
         }
 
     }
-    bool Worker::start(std::string& msg) {
+    bool Worker::start(std::string& msg) {//负责启动拉流、推流以及相关线程处理逻辑
 
         this->mPullStream = new AvPullStream(this);
         if (this->mPullStream->connect()) {
@@ -329,7 +329,7 @@ namespace AVSAnalyzer {
                             }
 
                             //绘制start
-                            cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
+                            //cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
                             if (happenDetects.size() > 0) {
                                 int x1, y1, x2, y2;
                                 for (size_t i = 0; i < happenDetects.size(); i++)

@@ -80,7 +80,7 @@ namespace AVSAnalyzer {
 		}
 		bool validateAdd(std::string& result_msg) {
 			if (code.empty() || streamUrl.empty() || algorithmCode.empty()|| objectCode.empty() || recognitionRegion.empty()) {
-				result_msg = "validate parameter error";
+				result_msg = "分析器端：缺少必备参数！";
 				return false;
 			}
 			if (pushStream) {
@@ -96,7 +96,7 @@ namespace AVSAnalyzer {
 		bool validateCancel(std::string& result_msg) {
 
 			if (code.empty()) {
-				result_msg = "validate parameter error";
+				result_msg = "分析器端：缺少必备参数！";
 				return false;
 			}
 			result_msg = "validate success";

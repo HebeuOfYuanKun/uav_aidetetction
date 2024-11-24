@@ -62,7 +62,9 @@ namespace AVSAnalyzer {
         //else {
         //    //使用CPU推理
         //}
+       
         if (device == "CUDAExecutionProvider") {
+            LOGI("CUDAExecutionProvider");
             try {
                 OrtCUDAProviderOptions cuda_options;
                 cuda_options.device_id = 0; // 使用第一个CUDA设备（0号GPU）
@@ -79,7 +81,8 @@ namespace AVSAnalyzer {
             }
         }
         else if (device == "TensorrtExecutionProvider") {
-            // TODO: 这里添加 TensorRT 相关的配置，目前TensorRt配置还有问题
+            LOGI("TensorrtExecutionProvider");
+            // TODO: 这里添加 TensorRT 相关的配置，目前TensorRt配置还有问题，应该是dll引起的异常
             try {
                 OrtTensorRTProviderOptions tensorrt_options;
 
@@ -89,7 +92,7 @@ namespace AVSAnalyzer {
                 tensorrt_options.trt_int8_enable = 0; // 禁用 INT8（如果需要，可以改为 1）
 
                 // 其他可选配置
-                // tensorrt_options.trt_max_workspace_size = ...; // 设置最大工作空间大小（如需要）
+                //tensorrt_options.trt_max_workspace_size = 20000; // 设置最大工作空间大小（如需要）
                 //Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_TensorRT(mSessionOptions, &tensorrt_options));
                 //Ort::ThrowOnError(mSessionOptions.AppendExecutionProvider_TensorRT(tensorrt_options));
                 mSessionOptions.AppendExecutionProvider_TensorRT(tensorrt_options);
