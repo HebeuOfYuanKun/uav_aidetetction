@@ -179,6 +179,7 @@ namespace AVSAnalyzer {
                             height,
                             width,
                             mControl->videoFps,
+                            mControl->category,
                             last_alarm_timestamp,prefix_size,
                             mControl->code.data()
                         );
@@ -329,7 +330,7 @@ namespace AVSAnalyzer {
                             }
 
                             //绘制start
-                            //cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
+                            cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
                             if (happenDetects.size() > 0) {
                                 int x1, y1, x2, y2;
                                 for (size_t i = 0; i < happenDetects.size(); i++)
@@ -343,13 +344,21 @@ namespace AVSAnalyzer {
                                     float       class_score = happenDetects[i].score;
 
                                     std::stringstream class_score_ss;
-                                    class_score_ss << std::setprecision(1) << class_score;
+                                    class_score_ss << std::setprecision(2) << class_score;//输出两位浮点数
                                     std::string title = class_name + ":" + class_score_ss.str();
 
-                                    cv::rectangle(image, cv::Rect(x1, y1, (x2 - x1), (y2 - y1)), cv::Scalar(0, 0, 255), 2, cv::LINE_8, 0);
+                                    
                                     
                                     cv::rectangle(image, cv::Point(x1, y1 - 30), cv::Point(x2, y1), cv::Scalar(0, 255, 255), -1);
-                                    putText(image, title, cv::Point(x1, y1), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(255, 0, 0), 2, 8);
+                                    if (happenDetects[i].grade > "0") {
+                                        cv::rectangle(image, cv::Rect(x1, y1, (x2 - x1), (y2 - y1)), cv::Scalar(0, 0, 255), 2, cv::LINE_8, 0);
+                                        putText(image, title, cv::Point(x1, y1), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(0, 0, 255), 2, 8);
+                                    }
+                                    else {
+                                        cv::rectangle(image, cv::Rect(x1, y1, (x2 - x1), (y2 - y1)), cv::Scalar(255, 0, 0), 2, cv::LINE_8, 0);
+                                        putText(image, title, cv::Point(x1, y1), cv::FONT_HERSHEY_PLAIN, 2.0, cv::Scalar(255, 0, 0), 2, 8);
+                                    }
+                                    
                                 }
                             }
                             cv::putText(image, mControl->algorithmCode, cv::Point(20, 80), cv::FONT_HERSHEY_COMPLEX, 2, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);

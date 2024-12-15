@@ -36,6 +36,7 @@ namespace AVSAnalyzer {
 		float score;
         int class_id;
 		std::string class_name;
+        std::string grade;
 	};
 
     class Algorithm

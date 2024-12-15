@@ -28,7 +28,7 @@ namespace AVSAnalyzer {
 
     bool Analyzer::handleVideoFrame(int64_t frameCount, cv::Mat& image, std::vector<DetectObject>& happenDetects, bool& happen, float& happenScore) {
 
-        if (mControl->algorithmCode == "onnxruntime_yolo8") {
+        if (mControl->modelCode == "onnxruntime_yolo8") {
             //v3.43新增，基于onnxruntime的yolo8检测
 
             if (mScheduler->algorithm_onnx_yolo8_mtx.try_lock()) {
@@ -42,7 +42,7 @@ namespace AVSAnalyzer {
             }
             if(!happenDetects.empty()){
 
-                cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
+                //cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
                 int x1, y1, x2, y2;
                 int matchCount = 0;
                 for (int i = 0; i < happenDetects.size(); i++)
@@ -71,16 +71,20 @@ namespace AVSAnalyzer {
                     if (iou >= 0.5) {
                         int class_id = happenDetects[i].class_id;
                         std::string class_name;
+                        std::string grade;
                         if (class_id < mControl->objects_v1_len) {
-                            class_name = mControl->objects_v1[class_id];
+                            class_name = mControl->objects_v1[class_id*2];
+                            grade = mControl->objects_v1[class_id*2+1];
                         }
                         else {
                             LOGE("class error,class_id=%d,objects_v1_len=%d", class_id, mControl->objects_v1_len);
                         }
 
                         happenDetects[i].class_name = class_name;
+                        happenDetects[i].grade = grade;
                         float class_score = happenDetects[i].score;
-                        if (class_name == mControl->objectCode) {
+                        if (mControl->objects_v1[class_id*2+1]>"0") {
+                            mControl->category = class_name;
                             ++matchCount;
                         }
                     }
@@ -94,7 +98,77 @@ namespace AVSAnalyzer {
 
             return true;
         }
-        else if (mControl->algorithmCode == "openvino_yolo8_face") {
+        else if (mControl->modelCode == "tensorrt_yolo8") {
+            //v3.43新增，基于tensorrt的yolo8检测
+
+            if (mScheduler->algorithm_tr_yolo8_mtx.try_lock()) {
+                if (mScheduler->algorithm_tr_yolo8) {
+                    happenDetects.clear();
+                    happen = false;
+                    happenScore = 0;
+                    mScheduler->algorithm_tr_yolo8->objectDetect(image, happenDetects);
+                }
+                mScheduler->algorithm_tr_yolo8_mtx.unlock();
+            }
+            if (!happenDetects.empty()) {
+
+                //cv::polylines(image, mControl->recognitionRegion_points, mControl->recognitionRegion_points.size(), cv::Scalar(0, 0, 255), 4, 8);//绘制多边形
+                int x1, y1, x2, y2;
+                int matchCount = 0;
+                for (int i = 0; i < happenDetects.size(); i++)
+                {
+                    x1 = happenDetects[i].x1;
+                    y1 = happenDetects[i].y1;
+                    x2 = happenDetects[i].x2;
+                    y2 = happenDetects[i].y2;
+
+                    std::vector<double> object_d;
+                    object_d.push_back(x1);
+                    object_d.push_back(y1);
+
+                    object_d.push_back(x2);
+                    object_d.push_back(y1);
+
+                    object_d.push_back(x2);
+                    object_d.push_back(y2);
+
+                    object_d.push_back(x1);
+                    object_d.push_back(y2);
+
+
+                    double iou = CalcuPolygonIOU(mControl->recognitionRegion_d, object_d);
+
+                    if (iou >= 0.5) {
+                        int class_id = happenDetects[i].class_id;
+                        std::string class_name;
+                        std::string grade;
+                        if (class_id < mControl->objects_v1_len) {
+                            class_name = mControl->objects_v1[class_id*2];
+                            grade = mControl->objects_v1[class_id * 2 + 1];
+                        }
+                        else {
+                            LOGE("class error,class_id=%d,objects_v1_len=%d", class_id, mControl->objects_v1_len);
+                        }
+
+                        happenDetects[i].class_name = class_name;
+                        happenDetects[i].grade = grade;
+                        float class_score = happenDetects[i].score;
+                        if (mControl->objects_v1[class_id*2+1]>"0") {
+                            mControl->category = class_name;
+                            ++matchCount;
+                        }
+                    }
+                }
+                if (matchCount > 0) {//匹配数据大于0，则认为发生了报警事件
+                    happen = true;
+                    happenScore = 1.0;
+                }
+
+            }
+
+            return true;
+        }
+        else if (mControl->modelCode == "openvino_yolo8_face") {
             //v3.43新增，基于openvino的yolo8-face，仅用于检测人脸
             //if (mscheduler->algorithm_ov_yolo8_face_mtx.try_lock()) {
             //    if (mscheduler->algorithm_ov_yolo8_face) {
@@ -213,18 +287,18 @@ namespace AVSAnalyzer {
             //    return true;
             //}
         }
-        else if (mControl->algorithmCode == "API") {
+        else if (mControl->modelCode == "API") {
             //v3.40新增，调用API类型的算法服务
             return this->postImage2Server(frameCount, image,happenDetects,happen,happenScore);
 
         }
-        else if (mControl->algorithmCode == "DLIB_FACE") {
+        else if (mControl->modelCode == "DLIB_FACE") {
             //v3.40新增，基于dlib的人脸检测
             //v4.41移除，因为v3.41需要在rk3588等硬件编译，如果不去除还需要编译dlib，比较麻烦
             LOGE("该算法仅在v3.40版本支持：%s", mControl->algorithmCode.data());
             return false;
         }
-        else if (mControl->algorithmCode == "CNNLSTM") {
+        else if (mControl->modelCode == "CNNLSTM") {
             //v3.42新增，基于连续帧进行行为分析
             if (mCnnLstmCurFrameCount >= mCnnLstmThresh) {
                 happenDetects.clear();
@@ -335,7 +409,7 @@ namespace AVSAnalyzer {
             param["image_base64"] = imageBase64;
 
             param["code"] = mControl->code;//布控编号
-            param["objectCode"] = mControl->objectCode;
+            //param["alarmObject"] = mControl->alarmObject;
             param["objects"] = mControl->objects;
             param["recognitionRegion"] = mControl->recognitionRegion;
             param["min_interval"] = mControl->minInterval;

@@ -17,12 +17,13 @@ namespace AVSAnalyzer {
 	{
 	public:
 		Alarm() = delete;
-		Alarm(int height, int width, int fps, int64_t happenTimestamp,int happenImageIndex, const char* controlCode);
+		Alarm(int height, int width, int fps, std::string category, int64_t happenTimestamp,int happenImageIndex, const char* controlCode);
 		~Alarm();
 	public:
 		int width = 0;
 		int height = 0;
 		int fps = 0;
+		std::string category;//预警事件类型
 		int64_t happenTimestamp = 0; //发生事件的时间戳（毫秒级）
 		int		happenImageIndex = 0;//封面图index
 		std::string controlCode;// 布控编号

@@ -3,6 +3,7 @@
 #include "Utils/Log.h"
 #include "Utils/Common.h"
 #include "Utils/TensorRTEngine.h"
+#include "Utils/ExceptionHandler.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/cudaimgproc.hpp>
 
@@ -113,14 +114,23 @@ namespace AVSAnalyzer {
             inputs.emplace_back(std::move(input));
         }
         // 获取输出形状
-        const auto& outputDims = mEngine->getOutputDims();
+        try
+        {
+            mEngine->getOutputDims();
+        }
+        catch (const std::exception& e)
+        {
+            ExceptionHandler::Handle(e);
+        }
+        
+        const auto& outputDims = mEngine->getOutputDims();        
 
         std::vector<std::vector<std::vector<float>>> featureVectors;
         if (mEngine->runInference(inputs, featureVectors)) {
 
-                int batchSize = outputDims[0].d[0];
-                int rows = outputDims[0].d[1]; // 8400
-                int dimensions = outputDims[0].d[2]; // 84
+                int batchSize = outputDims[0].d[0];               
+                int dimensions = outputDims[0].d[1]; // 84
+                int rows = outputDims[0].d[2];// 136000
                 ///开始处理结果数据
                 int size = featureVectors[0][0].size();
                 float* data = featureVectors[0][0].data();

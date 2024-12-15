@@ -19,12 +19,13 @@ extern "C" {
 namespace AVSAnalyzer {
 
 
-    Alarm::Alarm(int height, int width, int fps, int64_t happenTimestamp, int happenImageIndex, const char* controlCode) {
+    Alarm::Alarm(int height, int width, int fps, std::string category, int64_t happenTimestamp, int happenImageIndex, const char* controlCode) {
         //LOGI("");
 
         this->height = height;
         this->width = width;
         this->fps = fps;
+        this->category = category;
         this->happenTimestamp = happenTimestamp;
         this->happenImageIndex = happenImageIndex;
         this->controlCode = controlCode;
@@ -430,15 +431,19 @@ namespace AVSAnalyzer {
         frame_yuv420p = nullptr;
 
         //上传报警信息start
-        std::string url = mConfig->adminHost + "/api/postAddAlarm";
+        std::string url = mConfig->adminHost + "/service/business/alarm/add";
         Json::Value param;
-        param["control_code"] = mAlarm->controlCode;
+        param["controlCode"] = mAlarm->controlCode;
         param["desc"] = "";
-        param["video_path"] = video_path;
-        param["image_path"] = image_path;
-
+        param["category"] = mAlarm->category;
+        param["videoPath"] = video_path;
+        param["imagePath"] = image_path;
+        
         std::string data = param.toStyledString();
+        std::cout << data;
         Request request;
+        //request.setHeader("Expect", "");  // 移除 Expect 头
+        //request.setHeader("Content-Type", "application/json");  // 设置 Content-Type 为 application/json
         std::string response;
         bool res = request.post(url.data(), data.data(), response);
 

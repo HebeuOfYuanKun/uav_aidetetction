@@ -18,10 +18,13 @@ namespace AVSAnalyzer {
 		std::string pushStreamUrl;//推流地址
 		std::string algorithmCode;//算法编号
 		std::string objects;//算法支持所有分类
-		std::vector<std::string> objects_v1;
+		std::vector<std::string> objects_v1; // 一维数组，pedestrian,2,person,4第一个代表预警物体，第二个代表预警等级，0表示不预警
+		std::string category; // 当前预警目标
 		int objects_v1_len;
 
-		std::string objectCode;//目标预警编号
+		//std::vector<std::vector<std::string>> alarmObject;//目标预警字符串
+		//std::map<string, std::string> alarmObjects;//目标预警字符串
+		std::string modelCode;//模型编号
 
 		std::string		       recognitionRegion;   //算法识别区域坐标点 x1, y1, x2, y2, x3, y3, x4, y4
 		std::vector<double>    recognitionRegion_d; //算法识别区域坐标点 x1, y1, x2, y2, x3, y3, x4, y4
@@ -79,7 +82,7 @@ namespace AVSAnalyzer {
 			return res;
 		}
 		bool validateAdd(std::string& result_msg) {
-			if (code.empty() || streamUrl.empty() || algorithmCode.empty()|| objectCode.empty() || recognitionRegion.empty()) {
+			if (code.empty() || streamUrl.empty() || algorithmCode.empty()||  recognitionRegion.empty()) {
 				result_msg = "分析器端：缺少必备参数！";
 				return false;
 			}

@@ -168,7 +168,7 @@ void api_controls(struct evhttp_request* req, void* arg) {
                 result_data_item["pushStream"] = controls[i]->pushStream;
                 result_data_item["pushStreamUrl"] = controls[i]->pushStreamUrl.data();
                 result_data_item["algorithmCode"] = controls[i]->algorithmCode.data();
-                result_data_item["objectCode"] = controls[i]->objectCode.data();
+                //result_data_item["alarmObject"] = controls[i]->alarmObject.data();
                 result_data_item["recognitionRegion"] = controls[i]->recognitionRegion.data();
 
                 result_data_item["checkFps"] = controls[i]->checkFps;
@@ -282,9 +282,9 @@ void api_control_add(struct evhttp_request* req, void* arg) {
         control.pushStreamUrl = root["pushStreamUrl"].asString();
         control.algorithmCode = root["algorithmCode"].asString();
         control.objects = root["objects"].asString();
-        control.objects_v1 = split(control.objects, ",");
-        control.objects_v1_len = control.objects_v1.size();
-        control.objectCode = root["objectCode"].asString();
+        control.objects_v1 = split(control.objects, ",");       
+        control.objects_v1_len = control.objects_v1.size()/2;
+        control.modelCode = root["modelCode"].asString();
         control.recognitionRegion = root["recognitionRegion"].asString();
 
         if (root["minInterval"].isString()) {
